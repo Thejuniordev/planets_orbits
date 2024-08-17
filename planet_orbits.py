@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy.coordinates import get_body, solar_system_ephemeris
 from astropy.time import Time
+import mplcursors
 
 # Função para obter a posição dos planetas em graus e suas distâncias
 def get_planet_positions():
@@ -38,15 +39,23 @@ def plot_planet_positions():
     ax_polar.scatter([0], [0], color='yellow', s=200, label='Sol')
 
     # Adicionar planetas
+    scatter_plots = []
     for planet, ra, distance in positions:
         angle = np.deg2rad(ra % 360)  # Convertendo graus para radianos
-        ax_polar.scatter([angle], [distance], label=planet, s=100)
+        scatter = ax_polar.scatter([angle], [distance], s=100)
+        scatter_plots.append((scatter, planet))
 
     # Configurações adicionais do gráfico
     ax_polar.set_yticks(np.linspace(0, max(p[2] for p in positions), 6))  # Marcas radiais
     ax_polar.set_yticklabels([f"{int(d)} AU" for d in np.linspace(0, max(p[2] for p in positions), 6)])
     ax_polar.set_xticks(np.deg2rad(np.linspace(0, 360, 8)))  # Ajuste as marcações angulares
     ax_polar.set_xticklabels(['0°', '45°', '90°', '135°', '180°', '225°', '270°', '315°'])
+
+    # Adicionar interatividade
+    for scatter, planet in scatter_plots:
+        mplcursors.cursor(scatter, hover=True).connect(
+            "add", lambda sel, p=planet: sel.annotation.set_text(p)
+        )
 
     # Configuração da Tabela
     table_data = [(planet, f"{ra:.2f}°", f"{distance:.2f} AU") for planet, ra, distance in positions]
