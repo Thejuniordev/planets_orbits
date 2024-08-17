@@ -3,6 +3,7 @@ import numpy as np
 from astropy.coordinates import get_body, solar_system_ephemeris
 from astropy.time import Time
 import mplcursors
+from matplotlib.widgets import Slider
 
 # Função para obter a posição dos planetas em graus e suas distâncias
 def get_planet_positions():
@@ -68,6 +69,18 @@ def plot_planet_positions():
     table.auto_set_font_size(False)
     table.set_fontsize(10)
     table.scale(1.2, 1.2)
+
+    # Configuração de zoom
+    def zoom(event):
+        # Obtém o fator de zoom
+        zoom_factor = 1.2
+        if event.key == 'up':
+            ax_polar.set_ylim(ax_polar.get_ylim()[0] / zoom_factor, ax_polar.get_ylim()[1] / zoom_factor)
+        elif event.key == 'down':
+            ax_polar.set_ylim(ax_polar.get_ylim()[0] * zoom_factor, ax_polar.get_ylim()[1] * zoom_factor)
+        plt.draw()
+
+    fig.canvas.mpl_connect('key_press_event', zoom)
 
     plt.show()
 
