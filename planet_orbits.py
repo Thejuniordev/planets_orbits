@@ -3,7 +3,6 @@ import numpy as np
 from astropy.coordinates import get_body, solar_system_ephemeris
 from astropy.time import Time
 
-
 # Função para obter a posição dos planetas em graus e suas distâncias
 def get_planet_positions():
     # Tempo atual
@@ -22,7 +21,6 @@ def get_planet_positions():
             positions.append((planet, ra, distance))
 
     return positions
-
 
 # Função para desenhar o gráfico e a tabela
 def plot_planet_positions():
@@ -47,6 +45,8 @@ def plot_planet_positions():
     # Configurações adicionais do gráfico
     ax_polar.set_yticks(np.linspace(0, max(p[2] for p in positions), 6))  # Marcas radiais
     ax_polar.set_yticklabels([f"{int(d)} AU" for d in np.linspace(0, max(p[2] for p in positions), 6)])
+    ax_polar.set_xticks(np.deg2rad(np.linspace(0, 360, 8)))  # Ajuste as marcações angulares
+    ax_polar.set_xticklabels(['0°', '45°', '90°', '135°', '180°', '225°', '270°', '315°'])
 
     # Configuração da Tabela
     table_data = [(planet, f"{ra:.2f}°", f"{distance:.2f} AU") for planet, ra, distance in positions]
@@ -61,7 +61,6 @@ def plot_planet_positions():
     table.scale(1.2, 1.2)
 
     plt.show()
-
 
 # Executar a função para desenhar o gráfico e a tabela
 plot_planet_positions()
