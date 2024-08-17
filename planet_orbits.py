@@ -24,33 +24,44 @@ def get_planet_positions():
     return positions
 
 
-# Função para desenhar o gráfico
+# Função para desenhar o gráfico e a tabela
 def plot_planet_positions():
     # Obter posições dos planetas
     positions = get_planet_positions()
 
-    # Configuração do gráfico
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111, polar=True)
+    # Configuração da figura e dos eixos
+    fig, (ax_polar, ax_table) = plt.subplots(1, 2, figsize=(15, 8), gridspec_kw={'width_ratios': [2, 1]})
+
+    # Configuração do gráfico polar
+    ax_polar = plt.subplot(121, polar=True)
+    ax_polar.set_title('Posições dos Planetas ao Redor do Sol com Distâncias')
 
     # Adicionar a posição do Sol
-    ax.scatter([0], [0], color='yellow', s=200, label='Sol')
+    ax_polar.scatter([0], [0], color='yellow', s=200, label='Sol')
 
     # Adicionar planetas
     for planet, ra, distance in positions:
         angle = np.deg2rad(ra % 360)  # Convertendo graus para radianos
-        ax.scatter([angle], [distance], label=planet, s=100)
+        ax_polar.scatter([angle], [distance], label=planet, s=100)
 
     # Configurações adicionais do gráfico
-    ax.set_yticks(np.linspace(0, max(p[2] for p in positions), 6))  # Marcas radiais
-    ax.set_yticklabels([f"{int(d)} AU" for d in np.linspace(0, max(p[2] for p in positions), 6)])
+    ax_polar.set_yticks(np.linspace(0, max(p[2] for p in positions), 6))  # Marcas radiais
+    ax_polar.set_yticklabels([f"{int(d)} AU" for d in np.linspace(0, max(p[2] for p in positions), 6)])
 
-    # Adicionar legenda
-    ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1.2))
+    # Configuração da Tabela
+    table_data = [(planet, f"{ra:.2f}°", f"{distance:.2f} AU") for planet, ra, distance in positions]
+    column_labels = ["Planeta", "RA (Degrees)", "Distância (AU)"]
 
-    plt.title('Posições dos Planetas ao Redor do Sol com Distâncias')
+    # Criação da tabela
+    ax_table.axis('tight')
+    ax_table.axis('off')
+    table = ax_table.table(cellText=table_data, colLabels=column_labels, cellLoc='center', loc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.2)
+
     plt.show()
 
 
-# Executar a função para desenhar o gráfico
+# Executar a função para desenhar o gráfico e a tabela
 plot_planet_positions()
